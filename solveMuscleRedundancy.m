@@ -82,6 +82,10 @@ for i=1:Misc.nTrials
     DatStore = SolveStaticOptimization_IPOPT_CasADi(DatStore,Misc,i);
 end
 
+% save states and variables from static optimisation, this will be
+% overwritten later with dynamic optimisation results
+save(fullfile(Misc.OutPath,[Misc.AnalysisID '_Results.mat']),'DatStore','Misc');
+
 %% Descretisation
 %------------------------------------------------------------------------ %
 % mesh descretisation
@@ -182,8 +186,14 @@ if Misc.MRSBool == 1
         MuscProperties.kT = Misc.kT';
         MuscProperties.shift = Misc.shift';
         % formulate and solve the optimal control problem
-        [Results] = FormulateAndSolveMRS(Misc,DatStore,Mesh,trial,SolverSetup,Results,...
-            NMuscles,IG,MuscProperties,'genericMRS');
+        %try
+            [Results] = FormulateAndSolveMRS(Misc,DatStore,Mesh,trial,SolverSetup,Results,...
+                NMuscles,IG,MuscProperties,'genericMRS');
+        %catch excp_genericMRS
+        %    fprintf(2, "\nERROR: Generic MRS failed.\n");
+        %    fprintf(2, "%s\n", excp_genericMRS.message)
+        %end
+
     end
 end
 
@@ -214,7 +224,7 @@ end
 
 % Parameter optimization selected if EMG information or ultrasound
 % information is active
-BoolParamOpt = true;
+BoolParamOpt = false;
 % if Misc.UStracking == 1 || Misc.EMGconstr == 1
 %     BoolParamOpt = 1;
 % end
@@ -338,15 +348,21 @@ end
 
 % plot the states of the muscles in the simulation
 if Misc.PlotBool
-    h = PlotStates(Results,DatStore,Misc);
-    if ~isdir(fullfile(Misc.OutPath,'figures'))
-        mkdir(fullfile(Misc.OutPath,'figures'));
-    end
-    saveas(h,fullfile(Misc.OutPath,'figures','fig_States.fig'));
+    %try
+        h = PlotStates(Results,DatStore,Misc);
+        if ~isdir(fullfile(Misc.OutPath,'figures'))
+            mkdir(fullfile(Misc.OutPath,'figures'));
+        end
+        saveas(h,fullfile(Misc.OutPath,'figures','fig_States.fig'));
+    %catch excp_plot
+    %    fprintf(2, "\nERROR: Plot states failed.\n");
+    %    fprintf(2, "%s\n", excp_plot.message)
+    %end
 end
 
 %% save the results
-% plot states and variables from parameter estimation simulation
+% save states and variables from parameter estimation simulation,
+% overwrites earlier save for static optimisation
 save(fullfile(Misc.OutPath,[Misc.AnalysisID '_Results.mat']),'Results','DatStore','Misc');
 
 % write estimated parameters to new duplicate osim model
