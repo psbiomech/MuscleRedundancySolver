@@ -1,4 +1,4 @@
-    function [Results,DatStore,Misc] = solveMuscleRedundancy(time,Misc)
+function [Results,DatStore,Misc] = solveMuscleRedundancy(time,Misc)
 % -----------------------------------------------------------------------%
 % INPUTS:
 %           time: time window
