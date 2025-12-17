@@ -224,11 +224,11 @@ end
 
 % Parameter optimization selected if EMG information or ultrasound
 % information is active
-BoolParamOpt = false;
+% BoolParamOpt = true;
 % if Misc.UStracking == 1 || Misc.EMGconstr == 1
 %     BoolParamOpt = 1;
 % end
-if BoolParamOpt == 1
+if Misc.BoolParamOpt == 1
     if length(Misc.opt_sides)>1
         for s=1:length(Misc.opt_sides)
             Misc.sideOpt = Misc.opt_sides{s};
@@ -266,7 +266,7 @@ Results.Param.Original.lTs   = Misc.params(3,:);
 Results.Param.Original.alphao = Misc.params(4,:);
 Results.Param.Original.kT   = Misc.kT;
 % save estimated parameters
-if BoolParamOpt
+if Misc.BoolParamOpt
     Results.Param.Estimated.FMo    = Results.Param.Original.FMo;
     Results.Param.Estimated.lMo    = Results.Param.Original.lMo .* Results.Param.lMo_scaling_paramopt';
     Results.Param.Estimated.lTs    = Results.Param.Original.lTs .* Results.Param.lTs_scaling_paramopt';
@@ -287,7 +287,7 @@ end
 
 %% Run the MRS problem with estimated paramters (without EMG or US data)
 
-if Misc.ValidationBool == true && BoolParamOpt
+if Misc.ValidationBool == true && Misc.BoolParamOpt
     for trial = 1:Misc.nTrials
         clear IG
         IG.a = Results.MActivation(trial).MTE;
@@ -325,7 +325,7 @@ if Misc.PlotBool && Misc.EMGconstr == 1
 end
 
 % plot estimated parameters
-if Misc.PlotBool == 1 && BoolParamOpt ==1
+if Misc.PlotBool == 1 && Misc.BoolParamOpt ==1
     if length(Misc.opt_sides)>1
         h = PlotEstimatedParameters(Results,Misc);
     else
@@ -366,7 +366,7 @@ end
 save(fullfile(Misc.OutPath,[Misc.AnalysisID '_Results.mat']),'Results','DatStore','Misc');
 
 % write estimated parameters to new duplicate osim model
-if BoolParamOpt
+if Misc.BoolParamOpt
     muscleParams = Results.Param.Estimated;
     muscleNames  = Misc.allMuscleList;
     modelPath    = char(Misc.model_path);
