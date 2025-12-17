@@ -126,7 +126,6 @@ for t = 1:Misc.nTrials
     ID_Header_inds=zeros(size(DOF_inds));  IK_Header_inds = zeros(size(DOF_inds));
     for i=1:length(Misc.DofNames{t})
        ID_Header_inds(i)=find(strcmp([Misc.DofNames{t}{i} '_moment'],ID_header));
-       %ID_Header_inds(i)=find(strcmp(Misc.DofNames{t}{i},ID_header));
        IK_Header_inds(i)=find(strcmp(Misc.DofNames{t}{i},IK_header)); 
     end
 
